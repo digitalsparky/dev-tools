@@ -3,8 +3,42 @@ export DEBIAN_FRONTEND=noninteractive
 
 source /etc/os-release
 
-echo "Setting up local development environment"
-echo "This is for Linux Mint only"
+DEVPATH="$HOME/Dev/host"
+
+cat <<EOF
+
+Local web development environment setup by Matt Spurrier
+https://github.com/digitalsparky/dev-setup
+
+This has been written for Linux Mint, however feel free to adapt
+
+This does the following:
+
+* Installs latest NginX from the NginX Repository
+* Installs Docker from the Docker repository
+* Installs phpbrew and required build dependencies
+* Configures NginX with dynamic hosts for your local filesystem
+* Sets up dnsmasq to direct all *.local DNS requests to 127.0.0.1
+
+This allows you to address http://<project>.local from
+$DEVPATH/<project>
+
+NginX Logs are available in:
+
+$DEVPATH/logs
+
+Public web directory is:
+
+$DEVPATH/<project>/public
+
+Note: We're using docker for the purpose of running databases et al.
+We're using phpbrew in order to dynamically change PHP versions as required.
+
+Run php-fpm, listening on 127.0.0.1:9000
+
+This script does not install PHP using phpbrew - use the phpbrew-install script for that.
+
+EOF
 
 read -p "Are you sure you wish to continue? " -n 1 -r
 echo ""
@@ -12,15 +46,19 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
-sudo apt-get install -y curl > /dev/null 2>&1
+sudo apt-get install -qy curl linux-image-extra-$(uname -r) linux-image-extra-virtual apt-transport-https ca-certificates software-properties-common> /dev/null 2>&1
+
 sudo tee /etc/apt/sources.list.d/nginx.list <<EOF > /dev/null
 deb http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
 deb-src http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
 EOF
 
-curl -o /tmp/nginx.key http://nginx.org/keys/nginx_signing.key > /dev/null 2>&1
-sudo apt-key add /tmp/nginx.key  > /dev/null 2>&1
-rm -f /tmp/nginx.key
+sudo tee /etc/apt/sources.list.d/docker.list <<EOF > /dev/null
+deb https://apt.dockerproject.org/repo ubuntu-$UBUNTU_CODENAME main
+EOF
+
+curl -fsSL http://nginx.org/keys/nginx_signing.key | sudo apt-key add -  > /dev/null 2>&1
+curl -fsSL https://apt.dockerproject.org/gpg | sudo apt-key add - > /dev/null 2>&1
 
 sudo apt-get -q update > /dev/null 2>&1
 sudo apt-get -q -y upgrade > /dev/null 2>&1
@@ -28,6 +66,8 @@ sudo apt-get -q -y dist-upgrade > /dev/null 2>&1
 
 PACKAGES=$(cat <<EOF
     nginx
+    php7.0-cli
+    php7.0-curl
     libcurl3-openssl-dev
     libxslt1-dev
     re2c
@@ -64,16 +104,16 @@ PACKAGES=$(cat <<EOF
     libkrb5-dev
     libmemcached-dev
     libldap2-dev
+    docker-engine
 EOF
 )
 
-sudo apt-get install -yq php7.0-cli php7.0-curl > /dev/null 2>&1
+sudo apt-get install -yq  > /dev/null 2>&1
 sudo apt-get install -yq ${PACKAGES} > /dev/null 2>&1
 
 sudo curl -o /usr/local/bin/phpbrew https://github.com/phpbrew/phpbrew/raw/master/phpbrew > /dev/null 2>&1
 sudo chmod a+x /usr/local/bin/phpbrew
 
-DEVPATH="$HOME/Dev/host"
 if [ ! -d "$DEVPATH" ]; then
     mkdir -p "$DEVPATH"
 fi
