@@ -1,4 +1,6 @@
 #!/bin/bash
+export DEBIAN_FRONTEND=noninteractive
+
 source /etc/os-release
 
 echo "Setting up local development environment"
@@ -10,6 +12,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
+sudo apt-get install -y curl > /dev/null 2>&1
 sudo tee /etc/apt/sources.list.d/nginx.list <<EOF > /dev/null
 deb http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
 deb-src http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
@@ -22,7 +25,50 @@ rm -f /tmp/nginx.key
 sudo apt-get -q update > /dev/null 2>&1
 sudo apt-get -q -y upgrade > /dev/null 2>&1
 sudo apt-get -q -y dist-upgrade > /dev/null 2>&1
-sudo apt-get -q -y install nginx php-cli build-essential > /dev/null 2>&1
+
+PACKAGES=$(cat <<EOF
+    nginx
+    libcurl3-openssl-dev
+    libxslt1-dev
+    re2c
+    libxml2
+    libxml2-dev
+    bison
+    libbz2-dev
+    libreadline-dev
+    libfreetype6
+    libfreetype6-dev
+    libpng12-0
+    libpng12-dev
+    libjpeg-dev
+    libjpeg8-dev
+    libjpeg8
+    libgd-dev
+    libgd3
+    libxpm4
+    libltdl7
+    libltdl-dev
+    libssl-dev
+    gettext
+    libgettextpo-dev
+    libgettextpo0
+    libicu-dev
+    libmhash-dev
+    libmhash2
+    libmcrypt-dev
+    libmcrypt4
+    libmysqlclient-dev
+    libpq-dev
+    libfreetype6
+    libc-client2007e-dev
+    libkrb5-dev
+    libmemcached-dev
+    libldap2-dev
+EOF
+)
+
+sudo apt-get install -yq php7.0-cli php7.0-curl > /dev/null 2>&1
+sudo apt-get install -yq ${PACKAGES} > /dev/null 2>&1
 
 sudo curl -o /usr/local/bin/phpbrew https://github.com/phpbrew/phpbrew/raw/master/phpbrew > /dev/null 2>&1
 sudo chmod a+x /usr/local/bin/phpbrew
@@ -117,16 +163,39 @@ server {
     listen                   127.0.0.1:80;
     server_name              ~^(?<site_id>.+)\.local\$;
     root                     $DEVPATH/\$site_id/public;
-    location ~ \.php\$ {
-        try_files \$uri =404;
-        fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-        include fastcgi_params;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        fastcgi_intercept_errors on;
+    location ~ [^/]\.php(/|\$) {
+        fastcgi_split_path_info  ^(.+\.php)(/.+)\$;
         fastcgi_pass php;
-    }
+        fastcgi_index index.php;
+        fastcgi_param HTTP_PROXY "";
+        fastcgi_param PATH_INFO       \$fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include       fastcgi_params;
+  }
 }
+EOF
+
+sudo tee /etc/nginx/fastcgi_params <<EOF > /dev/null
+fastcgi_param  QUERY_STRING       \$query_string;
+fastcgi_param  REQUEST_METHOD     \$request_method;
+fastcgi_param  CONTENT_TYPE       \$content_type;
+fastcgi_param  CONTENT_LENGTH     \$content_length;
+fastcgi_param  SCRIPT_NAME        \$fastcgi_script_name;
+fastcgi_param  REQUEST_URI        \$request_uri;
+fastcgi_param  DOCUMENT_URI       \$document_uri;
+fastcgi_param  DOCUMENT_ROOT      \$document_root;
+fastcgi_param  SERVER_PROTOCOL    \$server_protocol;
+fastcgi_param  REQUEST_SCHEME     \$scheme;
+fastcgi_param  HTTPS              \$https if_not_empty;
+fastcgi_param  HTTPS              \$fehttps if_not_empty;
+fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+fastcgi_param  SERVER_SOFTWARE    nginx;
+fastcgi_param  REMOTE_ADDR        \$remote_addr;
+fastcgi_param  REMOTE_PORT        \$remote_port;
+fastcgi_param  SERVER_ADDR        \$server_addr;
+fastcgi_param  SERVER_PORT        \$server_port;
+fastcgi_param  SERVER_NAME        \$server_name;
+fastcgi_param  REDIRECT_STATUS    200;
 EOF
 
 sudo tee /etc/NetworkManager/dnsmasq.d/local.conf <<EOF > /dev/null
