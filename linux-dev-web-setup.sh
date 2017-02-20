@@ -10,7 +10,7 @@ cat <<EOF
 Local web development environment setup by Matt Spurrier
 https://github.com/digitalsparky/dev-tools
 
-This has been written for Linux Mint, however feel free to adapt
+This has been written for Linux Mint/Ubuntu/Ubuntu Variants, however feel free to adapt
 
 This does the following:
 
@@ -46,7 +46,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
 
-sudo apt-get install -qy curl linux-image-extra-$(uname -r) linux-image-extra-virtual apt-transport-https ca-certificates software-properties-common> /dev/null 2>&1
+sudo apt-get install -qy curl linux-image-extra-$(uname -r) linux-image-extra-virtual apt-transport-https ca-certificates software-properties-common > /dev/null 2>&1
 
 sudo tee /etc/apt/sources.list.d/nginx.list <<EOF > /dev/null
 deb http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
