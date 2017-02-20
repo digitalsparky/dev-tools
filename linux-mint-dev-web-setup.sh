@@ -181,7 +181,10 @@ http {
                                 text/x-component
                                 text/x-cross-domain-policy;
     reset_timedout_connection on;
-
+    map \$http_x_forwarded_proto \$fehttps {
+        default off;
+        https on;
+    }
     server {
         listen                  127.0.0.1:80 default_server;
         server_name             localhost;
