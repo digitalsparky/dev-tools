@@ -8,7 +8,7 @@ DEVPATH="$HOME/Dev/host"
 cat <<EOF
 
 Local web development environment setup by Matt Spurrier
-https://github.com/digitalsparky/dev-setup
+https://github.com/digitalsparky/dev-tools
 
 This has been written for Linux Mint, however feel free to adapt
 
