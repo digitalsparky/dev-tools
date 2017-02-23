@@ -140,6 +140,7 @@ http {
     include                     /etc/nginx/mime.types;
     access_log                  off;
     error_log                   $DEVPATH/logs/error.log crit;
+    rewrite_log                 on;
     client_max_body_size        32m;
     client_body_buffer_size     32m;
     keepalive_timeout           20;
