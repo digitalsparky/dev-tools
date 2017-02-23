@@ -138,8 +138,8 @@ http {
     types_hash_max_size         2048;
     default_type                application/octet-stream;
     include                     /etc/nginx/mime.types;
-    access_log                  off;
-    error_log                   $DEVPATH/logs/error.log crit;
+    access_log                  $DEVPATH/logs/access.log combined;
+    error_log                   $DEVPATH/logs/error.log debug;
     rewrite_log                 on;
     client_max_body_size        32m;
     client_body_buffer_size     32m;
