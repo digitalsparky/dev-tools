@@ -48,16 +48,12 @@ fi
 
 sudo apt-get install -qy curl linux-image-extra-$(uname -r) linux-image-extra-virtual apt-transport-https ca-certificates software-properties-common > /dev/null 2>&1
 
-sudo tee /etc/apt/sources.list.d/nginx.list <<EOF > /dev/null
-deb http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
-deb-src http://nginx.org/packages/ubuntu/ $UBUNTU_CODENAME nginx
-EOF
+sudo add-apt-repository ppa:nginx/stable
 
 sudo tee /etc/apt/sources.list.d/docker.list <<EOF > /dev/null
 deb https://apt.dockerproject.org/repo ubuntu-$UBUNTU_CODENAME main
 EOF
 
-curl -fsSL http://nginx.org/keys/nginx_signing.key | sudo apt-key add -  > /dev/null 2>&1
 curl -fsSL https://apt.dockerproject.org/gpg | sudo apt-key add - > /dev/null 2>&1
 
 sudo apt-get -q update > /dev/null 2>&1
@@ -65,7 +61,7 @@ sudo apt-get -q -y upgrade > /dev/null 2>&1
 sudo apt-get -q -y dist-upgrade > /dev/null 2>&1
 
 PACKAGES=$(cat <<EOF
-    nginx
+    nginx-extras
     php7.0-cli
     php7.0-curl
     libcurl3-openssl-dev
