@@ -182,6 +182,7 @@ http {
         default off;
         https on;
     }
+    include "/etc/nginx/modules-enabled/*.conf";
     server {
         listen                  127.0.0.1:80 default_server;
         server_name             localhost;
