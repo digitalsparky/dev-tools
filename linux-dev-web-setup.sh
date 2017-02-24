@@ -119,6 +119,7 @@ if [ ! -d "$DEVPATH/logs" ]; then
 fi
 
 sudo tee /etc/nginx/nginx.conf <<EOF > /dev/null
+include "/etc/nginx/modules-enabled/*.conf";
 user                  $USER $USER;
 worker_processes      auto;
 worker_rlimit_nofile  8192;
@@ -182,7 +183,6 @@ http {
         default off;
         https on;
     }
-    include "/etc/nginx/modules-enabled/*.conf";
     server {
         listen                  127.0.0.1:80 default_server;
         server_name             localhost;
