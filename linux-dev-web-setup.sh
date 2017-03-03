@@ -17,6 +17,7 @@ This does the following:
 * Installs latest NginX from the NginX Repository
 * Installs Docker from the Docker repository
 * Installs phpbrew and required build dependencies
+* Installs composer
 * Configures NginX with dynamic hosts for your local filesystem
 * Sets up dnsmasq to direct all *.local DNS requests to 127.0.0.1
 
@@ -109,6 +110,21 @@ sudo apt-get install -yq ${PACKAGES} > /dev/null 2>&1
 
 sudo curl -o /usr/local/bin/phpbrew https://raw.githubusercontent.com/phpbrew/phpbrew/master/phpbrew > /dev/null 2>&1
 sudo chmod a+x /usr/local/bin/phpbrew
+
+EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
+
+if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then
+    >&2 echo 'ERROR: Invalid installer signature'
+    rm composer-setup.php
+    exit 1
+fi
+
+php composer-setup.php --quiet
+RESULT=$?
+rm composer-setup.php
+exit $RESULT
 
 if [ ! -d "$DEVPATH" ]; then
     mkdir -p "$DEVPATH"
