@@ -107,7 +107,7 @@ EOF
 sudo apt-get install -yq  > /dev/null 2>&1
 sudo apt-get install -yq ${PACKAGES} > /dev/null 2>&1
 
-sudo curl -o /usr/local/bin/phpbrew https://github.com/phpbrew/phpbrew/raw/master/phpbrew > /dev/null 2>&1
+sudo curl -o /usr/local/bin/phpbrew https://raw.githubusercontent.com/phpbrew/phpbrew/master/phpbrew > /dev/null 2>&1
 sudo chmod a+x /usr/local/bin/phpbrew
 
 if [ ! -d "$DEVPATH" ]; then
