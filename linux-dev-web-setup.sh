@@ -217,6 +217,7 @@ server {
     listen                   127.0.0.1:80;
     server_name              ~^(?<site_id>.+)\.local\$;
     root                     $DEVPATH/\$site_id/public;
+    index                    index.php index.html index.htm;
     location ~ [^/]\.php(/|\$) {
         fastcgi_split_path_info  ^(.+\.php)(/.+)\$;
         fastcgi_pass php;
