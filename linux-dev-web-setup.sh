@@ -259,6 +259,8 @@ EOF
 sudo service network-manager restart> /dev/null 2>&1
 sudo service nginx restart> /dev/null 2>&1
 
+sudo usermod -aG docker $USER
+
 echo "All setup now"
 echo "You can use <project>.local as the hostname for any site"
 echo "Using $DEVPATH/<project>/public as the root directory"
