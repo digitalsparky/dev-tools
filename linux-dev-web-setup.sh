@@ -51,11 +51,12 @@ sudo apt-get install -qy curl linux-image-extra-$(uname -r) linux-image-extra-vi
 
 sudo add-apt-repository ppa:nginx/stable
 
-sudo tee /etc/apt/sources.list.d/docker.list <<EOF > /dev/null
-deb https://apt.dockerproject.org/repo ubuntu-$UBUNTU_CODENAME main
-EOF
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
 
-curl -fsSL https://apt.dockerproject.org/gpg | sudo apt-key add - > /dev/null 2>&1
 
 sudo apt-get -q update > /dev/null 2>&1
 sudo apt-get -q -y upgrade > /dev/null 2>&1
@@ -101,7 +102,7 @@ PACKAGES=$(cat <<EOF
     libkrb5-dev
     libmemcached-dev
     libldap2-dev
-    docker-engine
+    docker-ce
 EOF
 )
 
