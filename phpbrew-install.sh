@@ -38,3 +38,4 @@ phpbrew switch "php-${PHP_VERSION}"
 phpbrew ext install gd -- --with-freetype-dir=/usr/include
 phpbrew ext install opcache -- --enable-opcache
 phpbrew ext install imap -- --with-kerberos --with-imap-ssl
+phpbrew ext install mailparse
