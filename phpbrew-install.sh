@@ -1,5 +1,5 @@
 #!/bin/bash
-export PHP_VERSION="7.0.14"
+export PHP_VERSION="7.0.18"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -33,7 +33,7 @@ if [ ! -d ~/.phpbrew ]; then
     source "$HOME/.phpbrew/bashrc"
 fi
 
-phpbrew install -j "$(nproc)" "${PHP_VERSION}" +default +curl +gmp +imap +json +xml +mbstring +mcrypt +xml_all +zlib +fpm +gettext +mysql +intl +xmlrpc +iconv +soap +exif +pgsql -- --with-libdir=lib/x86_64-linux-gnu
+phpbrew install -j "$(nproc)" "${PHP_VERSION}" +default +sqlite +curl +gmp +imap +json +xml +mbstring +mcrypt +xml_all +zlib +fpm +gettext +mysql +intl +xmlrpc +iconv +soap +exif +pgsql -- --with-libdir=lib/x86_64-linux-gnu
 phpbrew switch "php-${PHP_VERSION}"
 phpbrew ext install gd -- --with-freetype-dir=/usr/include
 phpbrew ext install opcache -- --enable-opcache
