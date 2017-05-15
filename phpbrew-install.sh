@@ -26,7 +26,10 @@ sudo apt install build-essential \
     libpq-dev \
     libfreetype6 \
     libc-client2007e-dev \
-    libkrb5-dev
+    libkrb5-dev \
+    autoconf \
+    libgmp-dev
+    
 
 if [ ! -d ~/.phpbrew ]; then
     phpbrew init
